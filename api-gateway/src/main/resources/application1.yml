@@ -1,0 +1,41 @@
+spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: lb://iam-service
+          predicates:
+            - Method=POST
+            - Path=/iam-service/api/auth
+          filters:
+            - RemoveRequestHeader=Cookie
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders:
+              - content-type
+            allowedMethods:
+              - GET
+              - POST
+              - OPTIONS
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+  application:
+    name: api-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9090/eureka
+  instance:
+    hostname: localhost
+
+server:
+  port: 8000
+
+
